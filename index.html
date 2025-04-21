@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Gudang</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            background-size: cover;
+            background-attachment: fixed;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Animated background elements */
+        .background-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            opacity: 0.5;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            left: 20%;
+            animation-delay: 1s;
+        }
+        
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 30%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+        
+        .shape:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 60%;
+            left: 70%;
+            animation-delay: 3s;
+        }
+        
+        .shape:nth-child(5) {
+            width: 70px;
+            height: 70px;
+            top: 20%;
+            left: 40%;
+            animation-delay: 4s;
+        }
+        
+        .shape:nth-child(6) {
+            width: 90px;
+            height: 90px;
+            top: 80%;
+            left: 50%;
+            animation-delay: 5s;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-form {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .login-form:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .login-title {
+            text-align: center;
+            color: #185a9d;
+            margin-bottom: 30px;
+            font-size: 26px;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .login-title:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #43cea2, #185a9d);
+            margin: 8px auto 0;
+            border-radius: 3px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .form-control:focus {
+            border-color: #43cea2;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 206, 162, 0.2);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #3ab890 0%, #134b85 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .dashboard {
+            display: none;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(67, 206, 162, 0.2);
+        }
+        
+        .welcome-message {
+            font-size: 22px;
+            color: #185a9d;
+            font-weight: 600;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #e66767 0%, #c12e2e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dashboard-content {
+            margin-top: 20px;
+        }
+        
+        .dashboard-card {
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8));
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #43cea2;
+            transition: all 0.3s;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-card:nth-child(2) {
+            border-left: 4px solid #3498db;
+        }
+        
+        .dashboard-card:nth-child(3) {
+            border-left: 4px solid #9b59b6;
+        }
+        
+        .dashboard-card h3 {
+            color: #185a9d;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .dashboard-card p {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .dashboard-card a {
+            color: #43cea2;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
+        .dashboard-card a:hover {
+            color: #185a9d;
+            text-decoration: underline;
+        }
+
+        .help-text {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 13px;
+            color: #777;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: white;
+            margin-left: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+        }
+
+        .role-staff {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+        }
+
+        .role-user {
+            background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
+        }
+
+        .role-guest {
+            background: linear-gradient(135deg, #a4b0be 0%, #747d8c 100%);
+        }
+
+        /* Animation for form elements */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group, .btn, .login-title, .dashboard-card {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .btn { animation-delay: 0.3s; }
+        .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+        .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+        .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <!-- Animated background shapes -->
+    <div class="background-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container">
+        <!-- Login Form -->
+        <div class="login-form" id="loginForm">
+            <h2 class="login-title">Selamat Datang Di Dashboard Inventory Gudang</h2>
+            <form id="formLogin">
+                <div class="form-group">
+                    <label for="username">ID Pengguna</label>
+                    <input type="text" class="form-control" id="username" placeholder="Masukkan ID pengguna Anda">
+                    <div class="error-message" id="usernameError">ID pengguna diperlukan</div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Kata Sandi</label>
+                    <input type="password" class="form-control" id="password" placeholder="Masukkan kata sandi Anda">
+                    <div class="error-message" id="passwordError">Kata sandi diperlukan</div>
+                </div>
+                <button type="submit" class="btn">Masuk</button>
+                <div class="error-message" id="loginError">ID pengguna atau kata sandi salah</div>
+            </form>
+            <div class="help-text">
+                <p>Gunakan Id Dan Password yang sesuai</p>
+            </div>
+        </div>
+        
+        <!-- Dashboard -->
+        <div class="dashboard" id="dashboard">
+            <div class="dashboard-header">
+                <h2 class="welcome-message">
+                    Selamat Datang, <span id="userDisplay"></span>!
+                    <span id="roleBadge" class="role-badge"></span>
+                </h2>
+                <button class="logout-btn" id="logoutBtn">Keluar</button>
+            </div>
+            <div class="dashboard-content">
+                <div class="dashboard-card">
+                    <h3>Informasi Akun</h3>
+                    <p>Akun Anda aktif. Terakhir login pada <span id="lastLogin"></span>.</p>
+                    <p>Peran: <span id="userRole"></span></p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Pengumuman</h3>
+                    <p>Klik link dibawah ini untuk melihat persediaan pupuk pada inventory gudang </p> 
+                    <a href="Inventori.html">Klik untuk mengunjungi</a>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Aktivitas Terbaru</h3>
+                    <p>Anda telah berhasil login id dan password mohon privasi.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Expanded credentials list with 10 users
+            const validCredentials = {
+                // Admin Users
+                'admin': { password: 'admin123', role: 'Administrator' },
+                'superadmin': { password: 'super2025', role: 'Administrator' },
+                
+                // Staff Users
+                'mandor1': { password: 'mandor1', role: 'Mandor Perawatan' },
+                'asistenafd': { password: 'ast2025', role: 'Assiten Afdeling' },
+                'asistenhumas': { password: 'humas2025', role: 'Assiten Humas' },
+                'askep': { password: 'askep2025', role: 'Assiten Kepala' },
+                'manager': { password: 'mgr2025', role: 'Manager' },
+                
+                // Regular Users
+                'user': { password: 'password123', role: 'User' },
+                'user1': { password: 'user1pass', role: 'User' },
+                'user2': { password: 'user2pass', role: 'User' },
+                
+                // Guest Users
+                'guest': { password: 'guest123', role: 'Guest' },
+                'visitor': { password: 'visit2025', role: 'Guest' }
+            };
+            
+            const loginForm = document.getElementById('formLogin');
+            const dashboard = document.getElementById('dashboard');
+            const loginFormContainer = document.getElementById('loginForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const usernameError = document.getElementById('usernameError');
+            const passwordError = document.getElementById('passwordError');
+            const loginError = document.getElementById('loginError');
+            const userDisplay = document.getElementById('userDisplay');
+            const userRole = document.getElementById('userRole');
+            const roleBadge = document.getElementById('roleBadge');
+            const lastLogin = document.getElementById('lastLogin');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            // Check if user is already logged in
+            const savedUser = localStorage.getItem('loggedInUser');
+            if (savedUser) {
+                try {
+                    const userData = JSON.parse(savedUser);
+                    showDashboard(userData.username, userData.role);
+                } catch (e) {
+                    localStorage.removeItem('loggedInUser');
+                }
+            }
+            
+            // Handle form submission
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Reset errors
+                usernameError.style.display = 'none';
+                passwordError.style.display = 'none';
+                loginError.style.display = 'none';
+                
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+                
+                // Validate inputs
+                let hasError = false;
+                
+                if (!username) {
+                    usernameError.style.display = 'block';
+                    hasError = true;
+                }
+                
+                if (!password) {
+                    passwordError.style.display = 'block';
+                    hasError = true;
+                }
+                
+                if (hasError) return;
+                
+                // Check credentials
+                if (validCredentials[username] && validCredentials[username].password === password) {
+                    // Login successful
+                    const userData = {
+                        username: username,
+                        role: validCredentials[username].role,
+                        lastLogin: new Date().toISOString()
+                    };
+                    localStorage.setItem('loggedInUser', JSON.stringify(userData));
+                    showDashboard(username, validCredentials[username].role);
+                } else {
+                    // Login failed
+                    loginError.style.display = 'block';
+                }
+            });
+            
+            // Handle logout
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('loggedInUser');
+                loginFormContainer.style.display = 'block';
+                dashboard.style.display = 'none';
+                usernameInput.value = '';
+                passwordInput.value = '';
+            });
+            
+            function showDashboard(username, role) {
+                userDisplay.textContent = username;
+                userRole.textContent = role;
+                
+                // Set role badge
+                roleBadge.textContent = role;
+                roleBadge.className = 'role-badge';
+                
+                if (role === 'Administrator') {
+                    roleBadge.classList.add('role-admin');
+                } else if (role === 'Staff' || role === 'mandor') {
+                    roleBadge.classList.add('role-staff');
+                } else if (role === 'User') {
+                    roleBadge.classList.add('role-user');
+                } else {
+                    roleBadge.classList.add('role-guest');
+                }
+                
+                lastLogin.textContent = new Date().toLocaleString();
+                loginFormContainer.style.display = 'none';
+                dashboard.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
